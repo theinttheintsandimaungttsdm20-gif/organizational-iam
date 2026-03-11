@@ -1,7 +1,7 @@
 # Organizational IAM System (CM3035 Final Project)
 
 ## Overview  
-This project implements a centralized Identity and Access Management (IAM) system designed for organizational web-based applications. The system provides unified authentication, authorization, session control, and audit logging through a reusable API. It demonstrates how centralized identity management combined with role-based and scope-based authorization improves security, maintainability, and scalability.
+This project implements a centralized Identity and Access Management (IAM) system using Final Project Template 7.1 for the Advanced Web Development module designed for organizational web-based applications. The system provides unified authentication, authorization, session control, and audit logging through a reusable API. It demonstrates how centralized identity management combined with role-based and scope-based authorization improves security, maintainability, and scalability.
 
 ## Project Structure  
 

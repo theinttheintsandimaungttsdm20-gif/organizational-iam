@@ -1,0 +1,23 @@
+http://127.0.0.1:8000//api/admin/applications/working_hour_system/access-matrix/
+http://127.0.0.1:8000//api/admin/applications/role-scopes/
+{
+  "application": "working_hour_system",
+  "role_id": "MANAGER",
+  "scopes": [
+    "report.submit",
+    "report.view"
+  ]
+}
+
+http://127.0.0.1:8000//api/admin/applications/session-policy
+{
+  "application": "working_hour_system",
+  "session_timeout_seconds": 1900
+}
+
+
+manager1@company.com
+Manager@123
+
+employee1@company.com
+Employee@123

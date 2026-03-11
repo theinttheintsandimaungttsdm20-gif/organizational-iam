@@ -1,0 +1,13 @@
+<h2>Submit Working Hours</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Submit My Working Hours</button>
+</form>
+
+<a href="/reports/">View Reports</a> |
+<a href="/logout/">Logout</a>
+
+{% if message %}
+<pre>{{ message }}</pre>
+{% endif %}

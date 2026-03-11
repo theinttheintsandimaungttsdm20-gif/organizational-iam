@@ -1,0 +1,45 @@
+admin:
+  email: admin@central-id.local
+  password: Admin@12345
+  role: SUPER_ADMIN
+
+applications:
+  - name: Working Hour System
+    client_id: working_hour_system
+    default_session_timeout: 1800  # 30 minutes
+
+roles:
+  - SUPER_ADMIN
+  - ADMIN
+  - MANAGER
+  - USER
+
+scopes:
+  - settings.read
+  - settings.write
+  - report.view
+  - leave.apply
+  - leave.approve
+
+role_scopes:
+  USER:
+    - leave.apply
+
+  MANAGER:
+    - leave.apply
+    - leave.approve
+    - report.view
+
+  ADMIN:
+    - settings.read
+    - settings.write
+    - report.view
+    - leave.apply
+    - leave.approve
+
+  SUPER_ADMIN:
+    - settings.read
+    - settings.write
+    - report.view
+    - leave.apply
+    - leave.approve

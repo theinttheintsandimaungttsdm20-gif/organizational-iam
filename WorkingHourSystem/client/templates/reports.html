@@ -1,0 +1,10 @@
+<h2>Working Hour Reports</h2>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% else %}
+<pre>{{ data }}</pre>
+{% endif %}
+
+<a href="/submit/">Back</a> |
+<a href="/logout/">Logout</a>

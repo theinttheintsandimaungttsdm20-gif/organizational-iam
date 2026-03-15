@@ -1,0 +1,33 @@
+{% extends "admin_ui/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="login-wrapper">
+
+    <div class="login-box">
+
+        <h2>IAM Admin Login</h2>
+        <p class="subtitle">Secure access to admin dashboard</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Email</label>
+            <input type="text" name="email" placeholder="admin@company.com" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        {% if error %}
+        <div class="alert">{{ error }}</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

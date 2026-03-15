@@ -5,7 +5,8 @@ from .views import (
     EmployeeRoleUpdateView,
     RoleScopeUpdateView,
     SessionPolicyUpdateView,
-    ApplicationAccessMatrixView
+    ApplicationAccessMatrixView,
+    ApplicationListCreateView
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("employees/<int:user_id>/role/", EmployeeRoleUpdateView.as_view()),
     path("applications/role-scopes/", RoleScopeUpdateView.as_view()),
     path("applications/session-policy/", SessionPolicyUpdateView.as_view()),
+    path("applications/", ApplicationListCreateView.as_view()),
 ]

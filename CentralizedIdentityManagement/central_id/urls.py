@@ -22,4 +22,5 @@ urlpatterns = [
     path("api/admin/", include("admin_console.urls")),
     path("api/", include("identity.urls")),
     path("api/", include("protected_resources.urls")),
+    path("admin-ui/", include("admin_ui.urls")),
 ]

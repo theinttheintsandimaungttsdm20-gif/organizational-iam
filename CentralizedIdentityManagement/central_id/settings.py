@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local apps
     "identity",
     "admin_console",
+    "admin_ui",
     "protected_resources"
 ]
 
@@ -145,7 +146,9 @@ AUTH_USER_MODEL = "identity.User"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+IAM_API_BASE_URL = "http://127.0.0.1:8000"
 
 JWT_SETTINGS = {
     "ISSUER": "central-id-api",

@@ -1,0 +1,32 @@
+{% extends "admin_ui/base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="cards">
+    <div class="card">
+        <h3>Total Employees</h3>
+        <p class="card-number">{{ total_employees }}</p>
+    </div>
+    <div class="card">
+        <h3>Applications</h3>
+        <p class="card-number">{{ total_apps }}</p>
+    </div>
+    <div class="card">
+        <h3>Active Sessions</h3>
+        <p class="card-number">{{ total_sessions }}</p>
+    </div>
+</div>
+{% if alert %}<div class="alert">{{ alert }}</div>{% endif %}
+<div class="card">
+    <h3>Recent Logins</h3>
+    <table>
+        <tr>
+            <th>Email</th>
+            <th>Login Time</th>
+        </tr>
+        {% for item in recent_logins %} <tr>
+            <td>{{ item.email }}</td>
+            <td>{{ item.time }}</td>
+        </tr> {% endfor %}
+    </table>
+</div>
+{% endblock %}

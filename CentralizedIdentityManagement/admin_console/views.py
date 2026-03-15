@@ -1,13 +1,14 @@
 from django.shortcuts import render
 
 from django.contrib.auth import authenticate, get_user_model
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from identity.services.token_service import issue_admin_access_token
 from .serializers import AdminLoginSerializer
-from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, UserCreateSerializer
+from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, UserCreateSerializer, ApplicationSerializer
 from identity.permission import HasScope
 from identity.models import User, Role,Scope, Application, ApplicationPolicy, RoleScope
 
@@ -133,3 +134,7 @@ class SessionPolicyUpdateView(APIView):
         )
 
         return Response({"detail": "Session policy updated"})
+    
+class ApplicationListCreateView(ListCreateAPIView):    
+    queryset = Application.objects.all()    
+    serializer_class = ApplicationSerializer

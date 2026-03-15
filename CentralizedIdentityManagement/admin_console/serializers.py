@@ -20,9 +20,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class UserRoleUpdateSerializer(serializers.Serializer):
     role_id = serializers.IntegerField()
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:        
+        model = Application
+        fields = "__all__"
 
 class RoleScopeUpdateSerializer(serializers.Serializer):
     application = serializers.CharField()

@@ -5,10 +5,13 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from identity.services.token_service import issue_admin_access_token
 from .serializers import AdminLoginSerializer
-from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, UserCreateSerializer, ApplicationSerializer
+
+from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, ApplicationSerializer, RoleSerializer, ScopeSerializer
+from identity.serializers import EmployeeSerializer
 from identity.permission import HasScope
 from identity.models import User, Role,Scope, Application, ApplicationPolicy, RoleScope
 
@@ -39,44 +42,8 @@ class AdminLoginView(APIView):
             "token_type": "Bearer",
         })
 
-class EmployeeListCreateView(APIView):
-    permission_classes = [HasScope]
-    required_scopes = ["settings.write"]
-
-    def get(self, request):
-        users = User.objects.all().values("id", "email", "role__name")
-        return Response(users)
-
-    def post(self, request):
-        serializer = UserCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class EmployeeRoleUpdateView(APIView):
-    permission_classes = [HasScope]
-    required_scopes = ["settings.write"]
-
-    def put(self, request, user_id):
-        from .serializers import UserRoleUpdateSerializer
-        serializer = UserRoleUpdateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        try:
-            user = User.objects.get(id=user_id)
-            role = Role.objects.get(id=serializer.validated_data["role_id"])
-        except (User.DoesNotExist, Role.DoesNotExist):
-            return Response({"detail": "User or Role not found"}, status=404)
-
-        user.role = role
-        user.save()
-        return Response({"detail": "Role updated"})
-
 class RoleScopeUpdateView(APIView):
-    permission_classes = [HasScope]
-    required_scopes = ["settings.write"]
-
+    permission_classes=[IsAuthenticated]
     def put(self, request):
         serializer = RoleScopeUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -84,7 +51,7 @@ class RoleScopeUpdateView(APIView):
         role = serializer.validated_data["role"]
         scopes = serializer.validated_data["scopes"]
 
-        RoleScope.objects.filter(role=role).delete()
+        RoleScope.objects.filter(role=role, application=application).delete()
 
         for scope_name in scopes:
             scope, _ = Scope.objects.get_or_create(name=scope_name)
@@ -93,8 +60,7 @@ class RoleScopeUpdateView(APIView):
         return Response({"detail": "Scopes updated"})
 
 class ApplicationAccessMatrixView(APIView):
-    permission_classes = [HasScope]
-    required_scopes = ["settings.read"]
+    permission_classes=[IsAuthenticated]
 
     def get(self, request, client_id):
         application = get_object_or_404(
@@ -120,8 +86,7 @@ class ApplicationAccessMatrixView(APIView):
         })
 
 class SessionPolicyUpdateView(APIView):
-    permission_classes = [HasScope]
-    required_scopes = ["settings.write"]
+    permission_classes=[IsAuthenticated]
 
     def put(self, request):
         serializer = SessionPolicyUpdateSerializer(data=request.data)
@@ -136,5 +101,49 @@ class SessionPolicyUpdateView(APIView):
         return Response({"detail": "Session policy updated"})
     
 class ApplicationListCreateView(ListCreateAPIView):    
+    permission_classes=[IsAuthenticated]
     queryset = Application.objects.all()    
     serializer_class = ApplicationSerializer
+
+class RoleListCreateView(ListCreateAPIView):    
+    permission_classes=[IsAuthenticated]
+    queryset = Role.objects.all()    
+    serializer_class = RoleSerializer
+
+class ScopeListCreateView(ListCreateAPIView):  
+    permission_classes=[IsAuthenticated]  
+    queryset = Scope.objects.all()    
+    serializer_class = ScopeSerializer
+
+class EmployeeListCreateView(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request):
+        employees = User.objects.select_related("role").all()        
+        serializer = EmployeeSerializer(employees, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = EmployeeSerializer(data=request.data)        
+        serializer.is_valid(raise_exception=True)        
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class EmployeeDetailView(APIView):
+    permission_classes=[IsAuthenticated]
+    def get_object(self, pk):
+        return User.objects.get(pk=pk)
+
+    def get(self, request, pk):
+        serializer = EmployeeSerializer(self.get_object(pk))
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        employee = self.get_object(pk)
+        serializer = EmployeeSerializer(employee, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        self.get_object(pk).delete()        
+        return Response(status=status.HTTP_204_NO_CONTENT)

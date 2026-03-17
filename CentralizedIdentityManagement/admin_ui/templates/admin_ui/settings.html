@@ -1,0 +1,90 @@
+<h2>Settings</h2>
+
+<form method="GET">
+    <select name="application">
+        <option value="">Select Application</option>
+        {% for app in applications %}
+        <option value="{{ app.id }}" {% if selected_app==app.id|stringformat:"s" %}selected{% endif %}>
+            {{ app.name }}
+        </option>
+        {% endfor %}
+    </select>
+    <button>Load</button>
+</form>
+<h3>Roles</h3>
+
+<form method="POST" action="/admin-ui/roles/create/">
+    {% csrf_token %}
+    <input name="name" placeholder="Role name">
+    <button>Add</button>
+</form>
+
+<ul>
+    {% for r in roles %}
+    <li>
+        {{ r.name }}
+        <a href="/admin-ui/roles/delete/{{ r.id }}/">Delete</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<h3>Scopes</h3>
+
+<form method="POST" action="/admin-ui/scopes/create/">
+    {% csrf_token %}
+    <input name="name" placeholder="Scope name">
+    <button>Add</button>
+</form>
+
+<ul>
+    {% for s in scopes %}
+    <li>
+        {{ s.name }}
+        <a href="/admin-ui/scopes/delete/{{ s.id }}/">Delete</a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if selected_app %}
+<h3>Role Scope Mapping</h3>
+
+<form method="POST" action="/admin-ui/role-scopes/create/">
+    {% csrf_token %}
+    <input type="hidden" name="application" value="{{ selected_app }}">
+
+    <select name="role">
+        {% for r in roles %}
+        <option value="{{ r.id }}">{{ r.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="scope">
+        {% for s in scopes %}
+        <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button>Add</button>
+</form>
+
+
+<table border="1">
+    <tr>
+        <th>Role</th>
+        <th>Scope</th>
+        <th>Action</th>
+    </tr>
+
+    {% for rs in role_scopes %}
+    <tr>
+        <td>{{ rs.role.name }}</td>
+        <td>{{ rs.scope.name }}</td>
+        <td>
+            <a href="/admin-ui/role-scopes/delete/{{ rs.id }}/?application={{ selected_app }}">
+                Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}

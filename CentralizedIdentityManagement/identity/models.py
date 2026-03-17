@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import UserManager
@@ -15,8 +17,15 @@ class Role(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    # employee profile
     email = models.EmailField(unique=True)
+    name = models.CharField(max_length=120)
     role = models.ForeignKey(Role, on_delete=models.PROTECT)
+    contact_number = models.CharField(max_length=20)
+    # organizational identity
+    title = models.CharField(max_length=120)
+    department = models.CharField(max_length=120)
+    join_date = models.DateField()
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

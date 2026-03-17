@@ -11,8 +11,8 @@
         <p class="card-number">{{ total_apps }}</p>
     </div>
     <div class="card">
-        <h3>Active Sessions</h3>
-        <p class="card-number">{{ total_sessions }}</p>
+        <h3>Total Employees Roles</h3>
+        <p class="card-number">{{ total_roles }}</p>
     </div>
 </div>
 {% if alert %}<div class="alert">{{ alert }}</div>{% endif %}
@@ -25,7 +25,7 @@
         </tr>
         {% for item in recent_logins %} <tr>
             <td>{{ item.email }}</td>
-            <td>{{ item.time }}</td>
+            <td>{{ item.login_time }}</td>
         </tr> {% endfor %}
     </table>
 </div>

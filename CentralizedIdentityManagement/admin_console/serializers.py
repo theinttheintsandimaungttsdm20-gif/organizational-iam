@@ -5,13 +5,13 @@ class AdminLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["email", "password", "role"]
-        extra_kwargs = {
-            "password": {"write_only": True}
-        }
+# class UserCreateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ["email", "password", "role"]
+#         extra_kwargs = {
+#             "password": {"write_only": True}
+#         }
 
     def create(self, validated_data):
         password = validated_data.pop("password")
@@ -27,6 +27,17 @@ class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:        
         model = Application
         fields = "__all__"
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:        
+        model = Role
+        fields = "__all__"
+
+class ScopeSerializer(serializers.ModelSerializer):
+    class Meta:        
+        model = Scope
+        fields = "__all__"
+
 
 class RoleScopeUpdateSerializer(serializers.Serializer):
     application = serializers.CharField()

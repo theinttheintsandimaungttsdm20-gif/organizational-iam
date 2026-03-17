@@ -1,0 +1,44 @@
+{% extends "admin_ui/base.html" %} {% block content %}
+<h1>Employees</h1>
+<!-- CREATE -->
+<div class="card">
+    <h3>Add Employee</h3>
+    <form method="post">
+        {% csrf_token %} <label>Name</label><input name="name" required />
+        <label>Email</label><input name="email" required />
+        <label>Contact Number</label><input name="contact_number" />
+        <label>Title</label><input name="title" /> <label>Department</label><input name="department" /> <label>Join
+            Date</label><input type="date" name="join_date" /> <label>Role</label><select name="role_id">
+            {% for r in roles %}
+            <option value="{{ r.id }}">{{ r.name }}</option>
+            {% endfor %}
+        </select>
+        <button>Add Employee</button>
+    </form>
+</div>
+
+<!-- LIST -->
+<div class="card">
+    <h3>Employee List</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Title</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        {% for e in employees %}
+        <tr>
+            <td>{{ e.name }}</td>
+            <td>{{ e.email }}</td>
+            <td>{{ e.title }}</td>
+            <td>{{ e.role_name }}</td>
+            <td>
+                <a href="{% url 'edit_employee' e.id %}">Edit</a> |<a href="{% url 'delete_employee' e.id %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

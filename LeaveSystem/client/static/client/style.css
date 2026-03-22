@@ -1,0 +1,192 @@
+Style.css
+body {
+    background-color: #FAF3E0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 720px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+h1, h2 {
+    color: #1A3D7C;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 11px;
+    background-color: #1A3D7C;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #87CEEB;
+}
+
+a {
+    color: #1A3D7C;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #FF6F00;
+}
+
+.nav {
+    margin-top: 18px;
+}
+
+.nav a {
+    margin-right: 16px;
+}
+
+.success {
+    color: #1b7f3b;
+    margin-top: 15px;
+}
+
+.error {
+    color: #c0392b;
+    margin-top: 15px;
+}
+
+.info {
+    color: #1A3D7C;
+    margin-top: 15px;
+}
+
+.subtle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th {
+    background-color: #1A3D7C;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.report-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e6e6e6;
+    vertical-align: top;
+}
+
+.report-table tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+
+.report-table tr:hover {
+    background-color: #f7f7f7;
+}
+
+.btn-download {
+    background-color: #FF6F00;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.btn-download:hover {
+    background-color: #e66000;
+    color: white;
+}
+
+.btn-danger-link {
+    background-color: #b23b2a;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.btn-danger-link:hover {
+    background-color: #922d20;
+    color: white;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 6px 10px;
+    background-color: #1A3D7C;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background-color: #87CEEB;
+    color: white;
+}
+
+.pagination .current {
+    margin: 0 10px;
+    font-weight: bold;
+    color: #FF6F00;
+}
+
+.status-approved {
+    color: #1b7f3b;
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #d97706;
+    font-weight: bold;
+}

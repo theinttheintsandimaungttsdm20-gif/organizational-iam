@@ -1,13 +1,25 @@
-<h2>Submit Working Hours</h2>
+{% load static %}
+<link rel="stylesheet" href="{% static 'client/style.css' %}">
 
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Submit My Working Hours</button>
-</form>
+<div class="container">
+    <h2>Submit Working Hours</h2>
 
-<a href="/reports/">View Reports</a> |
-<a href="/logout/">Logout</a>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file">
+        <button type="submit">Upload Report</button>
+    </form>
 
-{% if message %}
-<pre>{{ message }}</pre>
-{% endif %}
+    <div class="nav">
+        <a href="/reports/">View Reports</a>
+        <a href="/logout/">Logout</a>
+    </div>
+
+    {% if message %}
+        <p class="success">{{ message }}</p>
+    {% endif %}
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</div>

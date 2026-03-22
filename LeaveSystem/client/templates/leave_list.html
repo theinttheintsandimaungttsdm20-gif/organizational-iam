@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave Requests</title>
+    <link rel="stylesheet" href="{% static 'client/style.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Leave Requests</h2>
+
+    <p class="user-info">
+        Logged in as: {{ user.email }}
+    </p>
+
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>User</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Approved By</th>
+
+                {% if "leave.approve" in scopes %}
+                <th>Action</th>
+                {% endif %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for leave in leaves %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ leave.user_email }}</td>
+                <td>{{ leave.start_date }}</td>
+                <td>{{ leave.end_date }}</td>
+                <td>{{ leave.reason }}</td>
+
+                <td>
+                    <span class="status {{ leave.status|lower }}">
+                        {{ leave.status }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ leave.approved_by|default:"-" }}
+                </td>
+
+                {% if "leave.approve" in scopes %}
+                <td>
+                    {% if leave.status == "PENDING" %}
+                    <form method="POST" action="/leave/approve/">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ leave.id }}">
+
+                        <button type="submit" name="action" value="approve" class="btn approve">
+                            Approve
+                        </button>
+
+                        <button type="submit" name="action" value="reject" class="btn reject">
+                            Reject
+                        </button>
+                    </form>
+                    {% else %}
+                        <button class="btn disabled" disabled title="No permission">
+                            -
+                        </button>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No leave requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if leaves.has_previous %}
+            <a href="?page={{ leaves.previous_page_number }}" class="page-link">Previous</a>
+        {% endif %}
+
+        <span class="page-info">
+            Page {{ leaves.number }} of {{ leaves.paginator.num_pages }}
+        </span>
+
+        {% if leaves.has_next %}
+            <a href="?page={{ leaves.next_page_number }}" class="page-link">Next</a>
+        {% endif %}
+    </div>
+
+    <div class="actions">
+        <a href="/leave/apply/" class="link">Apply Leave</a> |
+        <a href="/logout/" class="link">Logout</a>
+    </div>
+
+</div>
+
+</body>
+</html>

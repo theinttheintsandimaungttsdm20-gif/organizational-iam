@@ -1,7 +1,11 @@
-{% extends "admin_ui/base.html" %}
 {% load static %}
-
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IAM Admin</title>
+    <link rel="stylesheet" href="{% static 'admin_ui/style.css' %}">
+</head>
+<body>
 
 <div class="login-wrapper">
 
@@ -9,6 +13,15 @@
 
         <h2>IAM Admin Login</h2>
         <p class="subtitle">Secure access to admin dashboard</p>
+        {% if messages %}
+        {% for message in messages %}
+        {% if forloop.last %}
+        <div class="message">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
 
         <form method="post">
             {% csrf_token %}
@@ -18,8 +31,8 @@
 
             <label>Password</label>
             <input type="password" name="password" placeholder="Enter password" required>
-
-            <button type="submit">Login</button>
+            <br>
+            <button type="submit" class="login-btn">Login</button>
         </form>
 
         {% if error %}
@@ -29,5 +42,5 @@
     </div>
 
 </div>
-
-{% endblock %}
+</body>
+</html>

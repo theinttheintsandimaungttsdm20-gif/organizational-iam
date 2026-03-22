@@ -1,90 +1,137 @@
+{% extends "admin_ui/base.html" %} {% block content %}
 <h2>Settings</h2>
 
 <form method="GET">
     <select name="application">
         <option value="">Select Application</option>
+
         {% for app in applications %}
-        <option value="{{ app.id }}" {% if selected_app==app.id|stringformat:"s" %}selected{% endif %}>
+        <option value="{{ app.id }}"
+            {% if selected_app == app.id %}selected{% endif %}>
             {{ app.name }}
         </option>
         {% endfor %}
     </select>
-    <button>Load</button>
+
+    <button type="submit">Load</button>
 </form>
+
+{% if selected_app %}
+
+<h3 style="margin-top:18px;">Assign Role Scope</h3>
+
+<form method="post" action="/admin-ui/role-scopes/update/" style="margin-bottom:14px;">
+{% csrf_token %}
+
+<input type="hidden" name="application" value="{{ selected_app }}">
+
+<div class="role-scope-container">
+
+    <div class="role-scope-row">
+
+        <!-- ROLE -->
+        <div class="role-scope-field">
+            <label class="role-scope-label">Role</label>
+
+            <select name="role" class="role-scope-select">
+                {% for role in roles %}
+                    <option value="{{ role.name }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- SCOPES -->
+        <div class="role-scope-field">
+            <label class="role-scope-label">Scopes</label>
+
+            <select name="scopes" class="role-scope-select">
+                {% for scope in scopes %}
+                    <option value="{{ scope.name }}">{{ scope.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- BUTTON -->
+        <button type="submit" name="assign_role_scope" class="role-scope-btn">
+            Assign
+        </button>
+
+    </div>
+
+</div>
+
+</form>
+
+<h3>Current Mappings</h3>
+
+<div class="mapping-box">
+
+    {% for rs in role_scopes %}
+        <div class="mapping-item">
+            <span class="mapping-role">{{ rs.role }}</span>
+            <span class="mapping-arrow">→</span>
+            <span class="mapping-scope">{{ rs.scope }}</span>
+
+            <a href="/admin-ui/role-scopes/delete/{{ rs.id }}/?application={{ selected_app }}"
+               class="mapping-delete">
+                ✕
+            </a>
+        </div>
+    {% empty %}
+        <div class="mapping-empty">No mappings</div>
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
 <h3>Roles</h3>
+
 
 <form method="POST" action="/admin-ui/roles/create/">
     {% csrf_token %}
-    <input name="name" placeholder="Role name">
-    <button>Add</button>
+    <input type="text" name="name" placeholder="Role name">
+    <button type="submit">Add</button>
 </form>
 
-<ul>
-    {% for r in roles %}
-    <li>
-        {{ r.name }}
-        <a href="/admin-ui/roles/delete/{{ r.id }}/">Delete</a>
-    </li>
+<div class="mapping-box">
+
+    {% for role in roles %}
+        <div class="mapping-item">
+            <span class="mapping-role">{{ role.name }}</span>
+            <a href="/admin-ui/roles/delete/{{ role.id }}/" class="mapping-delete">
+                ✕
+            </a>
+        </div>
+    {% empty %}
+        <div class="mapping-empty">No mappings</div>
     {% endfor %}
-</ul>
+
+</div>
 
 <h3>Scopes</h3>
 
 <form method="POST" action="/admin-ui/scopes/create/">
     {% csrf_token %}
-    <input name="name" placeholder="Scope name">
-    <button>Add</button>
+    <input type="text" name="name" placeholder="Scope name">
+    <input type="text" name="description" placeholder="Scope Description">
+    <button type="submit">Add</button>
 </form>
 
-<ul>
-    {% for s in scopes %}
-    <li>
-        {{ s.name }}
-        <a href="/admin-ui/scopes/delete/{{ s.id }}/">Delete</a>
-    </li>
-    {% endfor %}
-</ul>
+<div class="mapping-box">
 
-{% if selected_app %}
-<h3>Role Scope Mapping</h3>
-
-<form method="POST" action="/admin-ui/role-scopes/create/">
-    {% csrf_token %}
-    <input type="hidden" name="application" value="{{ selected_app }}">
-
-    <select name="role">
-        {% for r in roles %}
-        <option value="{{ r.id }}">{{ r.name }}</option>
-        {% endfor %}
-    </select>
-
-    <select name="scope">
-        {% for s in scopes %}
-        <option value="{{ s.id }}">{{ s.name }}</option>
-        {% endfor %}
-    </select>
-
-    <button>Add</button>
-</form>
-
-
-<table border="1">
-    <tr>
-        <th>Role</th>
-        <th>Scope</th>
-        <th>Action</th>
-    </tr>
-
-    {% for rs in role_scopes %}
-    <tr>
-        <td>{{ rs.role.name }}</td>
-        <td>{{ rs.scope.name }}</td>
-        <td>
-            <a href="/admin-ui/role-scopes/delete/{{ rs.id }}/?application={{ selected_app }}">
-                Delete
+    {% for scope in scopes %}
+        <div class="mapping-item">
+            <span class="mapping-role">{{ scope.name }}</span>
+            <span class="mapping-arrow">--------</span>
+            <span class="mapping-role">{{ scope.description }}</span>
+            <a href="/admin-ui/scopes/delete/{{ scope.id }}/" class="mapping-delete">
+                ✕
             </a>
-        </td>
-    </tr>
+        </div>
+    {% empty %}
+        <div class="mapping-empty">No mappings</div>
     {% endfor %}
-</table>
-{% endif %}
+
+</div>
+{% endblock %}

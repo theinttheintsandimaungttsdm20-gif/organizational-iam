@@ -1,0 +1,145 @@
+body {
+    background-color: #FAF3E0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 500px;
+    margin: 80px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: #008080;
+    margin-bottom: 20px;
+}
+
+/* INPUT */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* BUTTON */
+button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #006666;
+}
+
+/* LINK */
+a {
+    color: #008080;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #FF6F00;
+}
+
+/* NAV LINKS */
+.nav {
+    margin-top: 15px;
+}
+
+.nav a {
+    margin-right: 15px;
+}
+
+/* MESSAGE */
+.success {
+    color: green;
+    margin-top: 15px;
+}
+
+.error {
+    color: red;
+    margin-top: 15px;
+}
+
+/* TABLE */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th {
+    background-color: #008080;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.report-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Zebra rows */
+.report-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+.report-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Download button */
+.btn-download {
+    background-color: #FF6F00;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-download:hover {
+    background-color: #e65c00;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 6px 10px;
+    background-color: #008080;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background-color: #006666;
+}
+
+.pagination .current {
+    margin: 0 10px;
+    font-weight: bold;
+    color: #FF6F00;
+}

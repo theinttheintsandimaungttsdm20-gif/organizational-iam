@@ -71,6 +71,7 @@ def issue_access_token(user, application_client_id: str) -> str:
         "exp": int(exp.timestamp()),
         "sub": str(user.id),
         "email": user.email,
+        "name": user.name,
         "role": user.role.name,
         "scope": " ".join(scopes),
         "client_id": application_client_id,

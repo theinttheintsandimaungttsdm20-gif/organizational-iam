@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from identity.services.token_service import issue_admin_access_token
 from .serializers import AdminLoginSerializer
 
-from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, ApplicationSerializer, RoleSerializer, ScopeSerializer
+from .serializers import SessionPolicyUpdateSerializer,RoleScopeUpdateSerializer, SessionPolicySerializer, ApplicationSerializer, RoleSerializer, ScopeSerializer
 from identity.serializers import EmployeeSerializer
 from identity.permission import HasScope
 from identity.models import User, Role,Scope, Application, ApplicationPolicy, RoleScope
@@ -42,23 +42,57 @@ class AdminLoginView(APIView):
             "token_type": "Bearer",
         })
 
+class RoleScopeListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, app_id):
+        role_scopes = RoleScope.objects.filter(application_id=app_id)
+
+        data = [
+            {
+                "id": rs.id,
+                "role": rs.role.name,
+                "scope": rs.scope.name
+            }
+            for rs in role_scopes
+        ]
+
+        return Response(data)
+
 class RoleScopeUpdateView(APIView):
     permission_classes=[IsAuthenticated]
-    def put(self, request):
-        serializer = RoleScopeUpdateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        application = serializer.validated_data["application"]
-        role = serializer.validated_data["role"]
-        scopes = serializer.validated_data["scopes"]
 
-        RoleScope.objects.filter(role=role, application=application).delete()
+    def put(self, request):
+        application = request.data.get("application")
+        role = request.data.get("role")
+        scopes = request.data.get("scopes", [])
+
+        try:
+            app = Application.objects.get(client_id=application)
+            role = Role.objects.get(name=role)
+        except:
+            return Response({"error": "Invalid data"}, status=400)
 
         for scope_name in scopes:
-            scope, _ = Scope.objects.get_or_create(name=scope_name)
-            RoleScope.objects.create(role=role, scope=scope, application=application)
+            scope = Scope.objects.get(name=scope_name)
 
-        return Response({"detail": "Scopes updated"})
+            RoleScope.objects.get_or_create(
+                application=app,
+                role=role,
+                scope=scope
+            )
 
+        return Response({"detail": "Scopes added successfully"})
+
+class RoleScopeDeleteView(APIView):
+    def delete(self, request, rs_id):
+        try:
+            role_scope = RoleScope.objects.get(id=rs_id)
+            role_scope.delete()
+            return Response({"detail": "Deleted"})
+        except RoleScope.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+        
 class ApplicationAccessMatrixView(APIView):
     permission_classes=[IsAuthenticated]
 
@@ -99,22 +133,55 @@ class SessionPolicyUpdateView(APIView):
         )
 
         return Response({"detail": "Session policy updated"})
+
+class SessionPolicyListCreateView(ListCreateAPIView):    
+    permission_classes=[IsAuthenticated]
+    queryset = ApplicationPolicy.objects.all()    
+    serializer_class = SessionPolicySerializer
     
 class ApplicationListCreateView(ListCreateAPIView):    
     permission_classes=[IsAuthenticated]
     queryset = Application.objects.all()    
     serializer_class = ApplicationSerializer
 
+
+class ApplicationDeleteView(APIView):
+    def delete(self, request, app_id):
+        try:
+            app = Application.objects.get(id=app_id)
+            app.delete()
+            return Response({"detail": "Deleted"})
+        except Application.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+
 class RoleListCreateView(ListCreateAPIView):    
     permission_classes=[IsAuthenticated]
     queryset = Role.objects.all()    
     serializer_class = RoleSerializer
+
+class RoleDeleteView(APIView):
+    def delete(self, request, role_id):
+        try:
+            role = Role.objects.get(id=role_id)
+            role.delete()
+            return Response({"detail": "Deleted"})
+        except Role.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
 
 class ScopeListCreateView(ListCreateAPIView):  
     permission_classes=[IsAuthenticated]  
     queryset = Scope.objects.all()    
     serializer_class = ScopeSerializer
 
+class ScopeDeleteView(APIView):
+    def delete(self, request, scope_id):
+        try:
+            scope = Scope.objects.get(id=scope_id)
+            scope.delete()
+            return Response({"detail": "Deleted"})
+        except Scope.DoesNotExist:
+            return Response({"error": "Not found"}, status=404)
+        
 class EmployeeListCreateView(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request):
@@ -144,6 +211,8 @@ class EmployeeDetailView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+class EmployeeDeleteView(APIView):
     def delete(self, request, pk):
-        self.get_object(pk).delete()        
+        employee = User.objects.get(id=pk)
+        employee.delete()        
         return Response(status=status.HTTP_204_NO_CONTENT)

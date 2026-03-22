@@ -1,0 +1,51 @@
+{% extends "admin_ui/base.html" %} {% block content %}
+<h2>Session Policy</h2>
+
+<form method="POST" action="/admin-ui/session/update/"  style="margin-bottom:14px;">
+    {% csrf_token %}
+
+    <div class="role-scope-container">
+        <div class="role-scope-row">
+            <div class="role-scope-field">
+                <label class="role-scope-label">Application</label><br>
+                <select name="application" class="role-scope-select" required>
+                    {% for app in applications %}
+                    <option value="{{ app.client_id }}" {% if app.client_id == selected_app %}selected{% endif %}>
+                        {{ app.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="role-scope-field">
+                <label class="role-scope-label">Session Timeout</label><br>
+                <select name="timeout" class="role-scope-select">
+                    <option value="15" {% if selected_policy == 15 %}selected{% endif %}>15 seconds</option>
+                    <option value="900" {% if selected_policy == 900 %}selected{% endif %}>15 minutes</option>
+                    <option value="1800" {% if selected_policy == 1800 %}selected{% endif %}>30 minutes</option>
+                    <option value="3600" {% if selected_policy == 3600 %}selected{% endif %}>1 hour</option>
+                    <option value="7200" {% if selected_policy == 7200 %}selected{% endif %}>2 hours</option>
+                </select>
+            </div>
+    
+            <button type="submit" style="margin-top:14px;" class="role-scope-btn">Save Policy</button>
+            </form>
+    
+        </div>
+    </div>
+<hr>
+
+<h3>Current Policies</h3>
+<div class="mapping-box">
+
+    {% for p in policies %}
+    <div class="mapping-item">
+        <span class="mapping-role">{{ p.application_name }}</span>
+        <span class="mapping-arrow">→</span>
+        <span class="mapping-scope">{{ p.session_timeout_seconds }}</span>
+    </div>
+    {% empty %}
+    <div class="mapping-empty">No Session Policy, it will use default session timeout</div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -60,7 +60,7 @@ class WorkingHourSubmitView(APIView):
             user=request.user
         )
         return Response({
-            "message": f"Working hours submitted by {request.user.email}"
+            "message": "success"
         })
 
 
@@ -81,4 +81,51 @@ class WorkingHourReportView(APIView):
         )
         return Response({
             "report": "Aggregated working hour report"
+        })
+
+class LeaveApplyView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, HasScope]
+    required_scopes = ["leave.apply"]
+
+    def post(self, request):
+        print("AUTH USER:", request.user)
+        print("SCOPES ON REQUEST:", getattr(request, "scopes", None))
+
+        log_event(
+            action="EMP_APPLY_LEAVE",
+            resource="LeaveSystem",
+            request=request,
+            user=request.user
+        )
+        return Response({
+             "message": f"Leave applied by {request.user}"
+        })
+
+class LeaveApproveView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, HasScope]
+    required_scopes = ["leave.approve"]
+
+    def post(self, request):
+        action = request.data.get("action")  # approve / reject
+
+        print("AUTH USER:", request.user)
+        print("SCOPES ON REQUEST:", getattr(request, "scopes", None))
+
+        if action not in ["approve", "reject"]:
+            return Response(
+                {"error": "Invalid action"},
+                status=400
+            )
+
+        log_event(
+            action=f"LEAVE_{action.upper()}",
+            resource="Leave",
+            request=request,
+            user=request.user
+        )
+
+        return Response({
+            "message": f"Leave {action}d by {request.user}"
         })

@@ -11,9 +11,11 @@
     <h2>IAM Admin</h2>
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="{% url 'employees' %}">Users</a>
-    <a href="#">Roles</a>
-    <a href="#">Sessions</a>
+    <a href="{% url 'settings' %}">Access Control Settings</a>
+    <a href="{% url 'session_view' %}">Sessions</a>
     <a href="{% url 'applications' %}">Applications</a>
+    <a href="{% url 'logout' %}">Logout</a>
+</form>
 </div>
 
 <div class="main">

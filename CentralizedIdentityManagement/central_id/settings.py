@@ -75,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'admin_ui.middleware.JWTSessionMiddleware',
 ]
 
 ROOT_URLCONF = 'central_id.urls'
@@ -149,6 +150,18 @@ AUTH_USER_MODEL = "identity.User"
 STATIC_URL = '/static/'
 
 IAM_API_BASE_URL = "http://127.0.0.1:8000"
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:8001",
+    "http://127.0.0.1:8002",
+    "http://127.0.0.1:8003",
+]
 
 JWT_SETTINGS = {
     "ISSUER": "central-id-api",

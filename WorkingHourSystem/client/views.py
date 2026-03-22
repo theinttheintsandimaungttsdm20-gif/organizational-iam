@@ -1,12 +1,18 @@
 import requests
-from django.shortcuts import render
-
 from django.shortcuts import render, redirect
+from .api_client import api_request
+from .decorators import api_protected
+from django.http import HttpResponseRedirect
+from .models import Report
+import jwt
+from django.core.paginator import Paginator
 
 IAM_API_BASE = "http://127.0.0.1:8000/api"
 
 
+# LOGIN
 def login_view(request):
+
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
@@ -25,56 +31,84 @@ def login_view(request):
             return redirect("submit")
 
         return render(request, "login.html", {"error": "Invalid credentials"})
-
+    
+    error = request.GET.get("error")
+    if error == "session_expired":
+        return render(request, "login.html", {
+        "error": "Session expired. Please login again."
+    })
     return render(request, "login.html")
 
-
-def submit_view(request):
+def get_user_from_token(request):
     token = request.session.get("access_token")
+
     if not token:
-        return redirect("login")
+        return None
 
+    payload = jwt.decode(token, options={"verify_signature": False})
+
+    return {
+        "email": payload.get("email"),
+        "name": payload.get("name")
+    }
+
+# SUBMIT
+@api_protected
+def submit_view(request):
+    print("Submit view ",request.session.get("name"))
     if request.method == "POST":
-        response = requests.post(
-            f"{IAM_API_BASE}/working-hours/submit/",
-            headers={"Authorization": f"Bearer {token}"}
-        )
+        response = api_request(request, "POST", "/working-hours/submit/")
 
-        if response.status_code == 401:
-            request.session.flush()
-            return redirect("login")
+        # FIX: detect redirect properly
+        if isinstance(response, HttpResponseRedirect):
+            print("Is submit view session expired detect")
+            return response
 
-        return render(request, "submit.html", {
-            "message": response.json()
-        })
+        print("Submit view response status code:", response.status_code)
+
+        if response.status_code == 403:
+            return render(request, "submit.html", {
+                "error": "You do not have permission to submit."
+            })
+        
+        user = get_user_from_token(request)
+        file = request.FILES.get("file")
+
+        if file:
+            Report.objects.create(
+                user_email=user["email"],
+                file=file
+            )
+
+            return render(request, "submit.html", {
+                "message": f"Working hours submitted by {user["name"]}"
+            })
 
     return render(request, "submit.html")
 
-
+# REPORT
+@api_protected
 def report_view(request):
-    token = request.session.get("access_token")
-    if not token:
-        return redirect("login")
+    response = api_request(request, "GET", "/working-hours/reports/")
 
-    response = requests.get(
-        f"{IAM_API_BASE}/working-hours/reports/",
-        headers={"Authorization": f"Bearer {token}"}
-    )
+    if isinstance(response, HttpResponseRedirect):
+        print("Is report view session expired detect")
+        return response
 
     if response.status_code == 403:
         return render(request, "reports.html", {
-            "error": "Access denied. You don't have permission to view this reports."
+            "error": "Access denied. You do not have permission."
         })
-
-    if response.status_code == 401:
-        request.session.flush()
-        return redirect("login")
-
+    reports = Report.objects.all().order_by('-uploaded_at')
+    paginator = Paginator(reports, 5)  # 5 per page
+    page_number = request.GET.get('page')
+    reports = paginator.get_page(page_number)
     return render(request, "reports.html", {
-        "data": response.json()
+        "reports": reports
     })
 
 
+# LOGOUT
 def logout_view(request):
-    request.session.flush()
+    request.session.pop("access_token", None)
     return redirect("login")

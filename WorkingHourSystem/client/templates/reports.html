@@ -1,10 +1,49 @@
-<h2>Working Hour Reports</h2>
+{% load static %}
+<link rel="stylesheet" href="{% static 'client/style.css' %}">
 
-{% if error %}
-<p style="color:red">{{ error }}</p>
-{% else %}
-<pre>{{ data }}</pre>
-{% endif %}
+<div class="container">
+    <h2>Viewing Working Hour Report</h2>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>User</th>
+                <th>Date</th>
+            </tr>
+        </thead>
 
-<a href="/submit/">Back</a> |
-<a href="/logout/">Logout</a>
+        <tbody>
+            {% for r in reports %}
+            <tr>
+                <td>
+                    <a href="{{ r.file.url }}" class="btn-download">Download</a>
+                </td>
+                <td>{{ r.user_email }}</td>
+                <td>{{ r.uploaded_at|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% if reports.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ reports.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ reports.number }} of {{ reports.paginator.num_pages }}
+        </span>
+
+        {% if reports.has_next %}
+        <a href="?page={{ reports.next_page_number }}">Next</a>
+        <a href="?page={{ reports.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+    <div class="nav">
+        <a href="/submit/">Back</a>
+        <a href="/logout/">Logout</a>
+    </div>
+</div>

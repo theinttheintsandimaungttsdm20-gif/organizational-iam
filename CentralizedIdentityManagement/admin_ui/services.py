@@ -49,7 +49,7 @@ class IAMClient:
     
     @staticmethod 
     def delete_role(token, role_id):
-        url = f"{settings.IAM_API_BASE_URL}/api/admin/applications/{role_id}/"
+        url = f"{settings.IAM_API_BASE_URL}/api/admin/roles/{role_id}/"
         return requests.delete(url, headers=IAMClient._headers(token))
     
     # ===== Scopes =====    
@@ -64,7 +64,7 @@ class IAMClient:
         return requests.post(url, json={"name": name, "description": description}, headers=IAMClient._headers(token))
     
     @staticmethod 
-    def delete_scopes(token, scope_id):
+    def delete_scope(token, scope_id):
         url = f"{settings.IAM_API_BASE_URL}/api/admin/scopes/{scope_id}/"
         return requests.delete(url, headers=IAMClient._headers(token))
     
@@ -72,18 +72,27 @@ class IAMClient:
     @staticmethod
     def get_role_scopes(token, application_id):
         url = f"{settings.IAM_API_BASE_URL}/api/admin/applications/{application_id}/role-scopes/"
-        res = requests.get(url, headers=IAMClient._headers(token))
-        return res.json()
+        return requests.get(url, headers=IAMClient._headers(token))
 
     @staticmethod
-    def create_role_scope(token, role_id, scope_id, application_id):
+    def get_app_session_policy(token):
+        url = f"{settings.IAM_API_BASE_URL}/api/admin/session-policies/"
+        return requests.get(url, headers=IAMClient._headers(token))
+    
+    @staticmethod
+    def update_session_policy(token, application, timeout):
+        print("Session Timeout Value: ", timeout)
+        url = f"{settings.IAM_API_BASE_URL}/api/admin/applications/session-policy/"
+        payload = {
+        "application": application,
+        "session_timeout_seconds": timeout
+        }
+        return requests.put(url, json=payload, headers=IAMClient._headers(token))
+    
+    @staticmethod
+    def update_role_scopes(token, payload):
         url = f"{settings.IAM_API_BASE_URL}/api/admin/applications/role-scopes/"
-        return requests.post(url,
-                             json={
-                                 "role_id": role_id,
-                                 "scope_id": scope_id,
-                                 "application_id": application_id,
-                             }, headers=IAMClient._headers(token))
+        return requests.put(url, json=payload, headers=IAMClient._headers(token))
 
     @staticmethod
     def delete_role_scope(token, rs_id):
@@ -111,6 +120,7 @@ class IAMClient:
 
     @staticmethod
     def update_employee(token, emp_id, name, email, contact_number, title, department, join_date, role_id):
+        print("In Update Employee Service")
         url = f"{settings.IAM_API_BASE_URL}/api/admin/employees/{emp_id}/"
         return requests.put(url, json={"name": name, "email" : email, "contact_number": contact_number, "title": title,
                                     "department": department, "join_date": join_date, "role": role_id, },
@@ -118,5 +128,8 @@ class IAMClient:
 
     @staticmethod
     def delete_employee(token, emp_id):
-        url = f"{settings.IAM_API_BASE_URL}/api/admin/employees/{emp_id}/"
+        print("In Delete Employee Service")
+        url = f"{settings.IAM_API_BASE_URL}/api/admin/employees/delete/{emp_id}/"
         return requests.delete(url, headers=IAMClient._headers(token))
+
+    

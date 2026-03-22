@@ -28,6 +28,11 @@ class ApplicationSerializer(serializers.ModelSerializer):
         model = Application
         fields = "__all__"
 
+class SessionPolicySerializer(serializers.ModelSerializer):
+    class Meta:        
+        model = ApplicationPolicy
+        fields = "__all__"
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:        
         model = Role
